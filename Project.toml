@@ -1,0 +1,13 @@
+name = "LowRankArithmetic"
+uuid = "8016d1d1-7a3b-4ad2-b79e-5984174ed314"
+authors = ["Acme Corp"]
+version = "0.1.0"
+
+[compat]
+julia = "1.6"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
