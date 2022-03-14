@@ -1,6 +1,4 @@
 using LowRankArithmetic
 using Test
 
-@testset "LowRankArithmetic.jl" begin
-    # Write your tests here.
-end
+include("low_rank_algebra_test.jl")
