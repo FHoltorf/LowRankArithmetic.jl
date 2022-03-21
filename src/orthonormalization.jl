@@ -1,4 +1,5 @@
-export QR, SVD, GradientDescent, SecondMomentMatching, orthonormalize!
+export GradientDescent, SecondMomentMatching, orthonormalize!
+# QR, SVD not exported due to conflict with LinearAlgebra identifiers. 
 
 struct GradientDescent
     maxiter::Int
