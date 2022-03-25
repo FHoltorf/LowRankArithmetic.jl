@@ -24,7 +24,7 @@ Two types of low-rank representations are supported:
 &emsp;&emsp;&emsp;&emsp;&emsp;<img src="https://render.githubusercontent.com/render/math?math=\mathbb{R}^{n\times m} \ni X = USV^\top"> where 
 <img src="https://render.githubusercontent.com/render/math?math=U\in \mathbb{R}^{n\times r}, S\in \mathbb{R}^{r\times r}, V\in \mathbb{R}^{m\times r}">
 
-Note, however, that $U$ and $V$ need not be orthogonal, nor are $S$ and $Z$ required to be diagonal or upper triangular as may be familiar from the QR or SVD factorizations. In particular, these properties are not maintained when a QR or SVD factorization is propagated through different arithmetic operations. 
+Note, however, that U and V need not be orthogonal, nor are $S$ and $Z$ required to be diagonal or upper triangular as may be familiar from the QR or SVD factorizations. In particular, these properties are not maintained when a QR or SVD factorization is propagated through different arithmetic operations. 
 
-LowRankArithmetic.jl further supports efficient & robust svd-based rounding procedures to reduce the rank of a given low rank factorization. Also efficient Gram-Schmidt-, QR-, SVD-, and gradient flow-based reorthonormalization procedures for the $U$ and $V$ factors are available. 
+LowRankArithmetic.jl further supports efficient & robust svd-based rounding procedures to reduce the rank of a given low rank factorization. Also efficient Gram-Schmidt-, QR-, SVD-, and gradient flow-based reorthonormalization procedures for the U and V factors are available. 
 
