@@ -180,23 +180,7 @@ function svd(A::TwoFactorApproximation, alg=QR())
 end
 
 ## orthonormalization 
-function orthonormalize!(LRA::SVDLikeApproximation, ::QR)
-    Q, RU = qr(LRA.U)
-    P, RV = qr(LRA.V)
-    LRA.U .= Matrix(Q) 
-    LRA.V .= Matrix(P) 
-    LRA.S .= RU*S*RV'
-end
-
-function orthonormalize!(LRA::SVDLikeApproximation, ::SVD)
-    U, SU, VU = svd(LRA.U)
-    V, SV, VV = svd(LRA.V)
-    LRA.U .= U
-    LRA.S .= Diagonal(SU)*VU*LRA.S*VV'*Diagonal(SV)
-    LRA.V .= V
-end
-
-function orthonormalize!(LRA::SVDLikeApproximation, alg::GradientDescent)
-    orthonormalize!(LRA.U, LRA.S, alg)
-    orthonormalize!(LRA.V, LRA.S', alg)
+function orthonormalize!(LRA::SVDLikeApproximation, alg)
+    orthonormalize!(LRA.U, LRA.S', alg)
+    orthonormalize!(LRA.V, LRA.S, alg)
 end

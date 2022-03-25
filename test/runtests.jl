@@ -1,4 +1,5 @@
 using LowRankArithmetic
 using Test
 
-include("low_rank_algebra_test.jl")
+include("basic_arithmetic.jl")
+include("orthonormalization.jl")

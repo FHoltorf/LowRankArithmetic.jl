@@ -160,18 +160,6 @@ function add_scalar(A, α::Number)
 end
 
 ## orthonormalization 
-function orthonormalize!(LRA::TwoFactorApproximation, ::QR)
-    Q, R = qr(LRA.U)
-    LRA.U .= Matrix(Q) # ToDo: store Q in terms of householder reflections
-    LRA.Z .= LRA.Z*R'
-end
-
-function orthonormalize!(LRA::TwoFactorApproximation, ::SVD)
-    U, S, V = svd(LRA.U)
-    LRA.U .= U 
-    LRA.Z .= LRA.Z*V*Diagonal(S)
-end
-
-function orthonormalize!(LRA::TwoFactorApproximation, alg::GradientDescent)
+function orthonormalize!(LRA::TwoFactorApproximation, alg)
     orthonormalize!(LRA.U, LRA.Z, alg)
 end
