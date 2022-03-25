@@ -35,6 +35,6 @@ broadcasted(::typeof(Base.literal_pow), ::typeof(^), A::AbstractLowRankRepresent
 
 include("utils.jl")
 include("orthonormalization.jl")
-include("two_factor_approximation.jl")
-include("svd_like_factorization.jl")
+include("two_factor_representation.jl")
+include("svd_like_representation.jl")
 end
