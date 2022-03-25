@@ -153,6 +153,5 @@ end
 # end
 
 # ToDo: 
-#  1. add Gram-Schmidt orthonormalization
-#  2. add general minimum second order moment matching orthonormalization:  
+#  1. add general minimum second order moment matching orthonormalization:  
 #         https://link.springer.com/content/pdf/10.1007/s00211-021-01178-8.pdf

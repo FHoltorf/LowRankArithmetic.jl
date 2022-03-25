@@ -3,13 +3,13 @@ export truncated_svd
 function truncated_svd(A::AbstractMatrix, r::Int)
     @assert r <= minimum(size(A)) "truncated rank can not exceed the maximum rank of A"
     U, S, V = svd(A)
-    return SVDLikeApproximation(U[:,1:r], Matrix(Diagonal(S[1:r])), V[:,1:r])
+    return SVDLikeRepresentation(U[:,1:r], Matrix(Diagonal(S[1:r])), V[:,1:r])
 end
 
 function truncated_svd(A::AbstractMatrix; ϵ = 0)
     U, S, V = svd(A)
     r = truncate_to_tolerance(S, ϵ)
-    return SVDLikeApproximation(U[:,1:r], Matrix(Diagonal(S[1:r])), V[:,1:r])
+    return SVDLikeRepresentation(U[:,1:r], Matrix(Diagonal(S[1:r])), V[:,1:r])
 end
 
 function truncate_to_tolerance(S, tol)

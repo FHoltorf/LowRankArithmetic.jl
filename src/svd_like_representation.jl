@@ -1,4 +1,4 @@
-export SVDLikeApproximation
+export SVDLikeRepresentation
 """
     X = U*S*V'
 
@@ -13,76 +13,76 @@ export SVDLikeApproximation
         * SVD()
         * GradientDescent()
 """
-mutable struct SVDLikeApproximation{uType, sType, vType} <: AbstractLowRankApproximation
+mutable struct SVDLikeRepresentation{uType, sType, vType} <: AbstractLowRankApproximation
     U::uType
     S::sType
     V::vType
 end 
 
-rank(LRA::SVDLikeApproximation) = size(LRA.S,1)
-size(LRA::SVDLikeApproximation) = (size(LRA.U,1), size(LRA.V,1))
-size(LRA::SVDLikeApproximation, ::Val{1}) = size(LRA.U,1)
-size(LRA::SVDLikeApproximation, ::Val{2}) = size(LRA.V,1)
-size(LRA::SVDLikeApproximation, i::Int) = size(LRA, Val(i))
-Matrix(LRA::SVDLikeApproximation) = LRA.U*LRA.S*LRA.V'
-getindex(LRA::SVDLikeApproximation, i::Int, j::Int) = sum(LRA.U[i,k]*sum(LRA.S[k,s]*LRA.V[j,s] for s in 1:rank(LRA)) for k in 1:rank(LRA)) # good enough for now
-getindex(LRA::SVDLikeApproximation, i, j::Int) = SVDLikeApproximation(LRA.U[i,:], LRA.S, LRA.V[[j],:])  # good enough for now
-getindex(LRA::SVDLikeApproximation, i::Int, j) = SVDLikeApproximation(LRA.U[[i],:], LRA.S, LRA.V[j,:])  # good enough for now
-getindex(LRA::SVDLikeApproximation, i, j) = SVDLikeApproximation(LRA.U[i,:], LRA.S, LRA.V[j,:])  # good enough for now
-getindex(LRA::SVDLikeApproximation, ::Colon, j::AbstractVector) = SVDLikeApproximation(LRA.U, LRA.S, LRA.V[j,:])  # good enough for now
-getindex(LRA::SVDLikeApproximation, ::Colon, j::Int) = SVDLikeApproximation(LRA.U, LRA.S, LRA.V[[j],:])  # good enough for now
-getindex(LRA::SVDLikeApproximation, i::AbstractVector, ::Colon) = SVDLikeApproximation(LRA.U[i,:], LRA.S, LRA.V)  # good enough for now
-getindex(LRA::SVDLikeApproximation, i::Int, ::Colon) = SVDLikeApproximation(LRA.U[[i],:], LRA.S, LRA.V)  # good enough for now
-hcat(A::SVDLikeApproximation, B::SVDLikeApproximation) = SVDLikeApproximation(hcat(A.U, B.U), blockdiagonal(A.S, B.S), blockdiagonal(A.V, B.V))
-vcat(A::SVDLikeApproximation, B::SVDLikeApproximation) = SVDLikeApproximation(blockdiagonal(A.U, B.U), blockdiagonal(A.S, B.S), hcat(A.V, B.V))
+rank(LRA::SVDLikeRepresentation) = size(LRA.S,1)
+size(LRA::SVDLikeRepresentation) = (size(LRA.U,1), size(LRA.V,1))
+size(LRA::SVDLikeRepresentation, ::Val{1}) = size(LRA.U,1)
+size(LRA::SVDLikeRepresentation, ::Val{2}) = size(LRA.V,1)
+size(LRA::SVDLikeRepresentation, i::Int) = size(LRA, Val(i))
+Matrix(LRA::SVDLikeRepresentation) = LRA.U*LRA.S*LRA.V'
+getindex(LRA::SVDLikeRepresentation, i::Int, j::Int) = sum(LRA.U[i,k]*sum(LRA.S[k,s]*LRA.V[j,s] for s in 1:rank(LRA)) for k in 1:rank(LRA)) # good enough for now
+getindex(LRA::SVDLikeRepresentation, i, j::Int) = SVDLikeRepresentation(LRA.U[i,:], LRA.S, LRA.V[[j],:])  # good enough for now
+getindex(LRA::SVDLikeRepresentation, i::Int, j) = SVDLikeRepresentation(LRA.U[[i],:], LRA.S, LRA.V[j,:])  # good enough for now
+getindex(LRA::SVDLikeRepresentation, i, j) = SVDLikeRepresentation(LRA.U[i,:], LRA.S, LRA.V[j,:])  # good enough for now
+getindex(LRA::SVDLikeRepresentation, ::Colon, j::AbstractVector) = SVDLikeRepresentation(LRA.U, LRA.S, LRA.V[j,:])  # good enough for now
+getindex(LRA::SVDLikeRepresentation, ::Colon, j::Int) = SVDLikeRepresentation(LRA.U, LRA.S, LRA.V[[j],:])  # good enough for now
+getindex(LRA::SVDLikeRepresentation, i::AbstractVector, ::Colon) = SVDLikeRepresentation(LRA.U[i,:], LRA.S, LRA.V)  # good enough for now
+getindex(LRA::SVDLikeRepresentation, i::Int, ::Colon) = SVDLikeRepresentation(LRA.U[[i],:], LRA.S, LRA.V)  # good enough for now
+hcat(A::SVDLikeRepresentation, B::SVDLikeRepresentation) = SVDLikeRepresentation(hcat(A.U, B.U), blockdiagonal(A.S, B.S), blockdiagonal(A.V, B.V))
+vcat(A::SVDLikeRepresentation, B::SVDLikeRepresentation) = SVDLikeRepresentation(blockdiagonal(A.U, B.U), blockdiagonal(A.S, B.S), hcat(A.V, B.V))
 
 # simple support of adjoints, probably not ideal though
-adjoint(LRA::SVDLikeApproximation) = TwoFactorRepresentation(conj(LRA.V),LRA.S',conj(LRA.U)) 
+adjoint(LRA::SVDLikeRepresentation) = TwoFactorRepresentation(conj(LRA.V),LRA.S',conj(LRA.U)) 
 
 # converting between both representations
-TwoFactorRepresentation(A::SVDLikeApproximation) = TwoFactorRepresentation(A.U, A.V*A.S')
-function SVDLikeApproximation(A::TwoFactorRepresentation) 
+TwoFactorRepresentation(A::SVDLikeRepresentation) = TwoFactorRepresentation(A.U, A.V*A.S')
+function SVDLikeRepresentation(A::TwoFactorRepresentation) 
     U, S, V = svd(A.Z)
-    return SVDLikeApproximation(A.U*V, S', U)
+    return SVDLikeRepresentation(A.U*V, S', U)
 end
 
 ## *
-*(A::AbstractMatrix, B::SVDLikeApproximation) = SVDLikeApproximation(A*B.U, B.S, B.V)
-*(A::SVDLikeApproximation, B::AbstractMatrix) = SVDLikeApproximation(A.U, A.S, B'*A.V)
-*(A::SVDLikeApproximation, ::UniformScaling) = A
-*(::UniformScaling, A::SVDLikeApproximation) = A
-function *(A::SVDLikeApproximation, B::SVDLikeApproximation)
+*(A::AbstractMatrix, B::SVDLikeRepresentation) = SVDLikeRepresentation(A*B.U, B.S, B.V)
+*(A::SVDLikeRepresentation, B::AbstractMatrix) = SVDLikeRepresentation(A.U, A.S, B'*A.V)
+*(A::SVDLikeRepresentation, ::UniformScaling) = A
+*(::UniformScaling, A::SVDLikeRepresentation) = A
+function *(A::SVDLikeRepresentation, B::SVDLikeRepresentation)
     if rank(A) ≤ rank(B)
-        return SVDLikeApproximation(A.U, A.S, B.V*B.S'*(B.U'*A.V))
+        return SVDLikeRepresentation(A.U, A.S, B.V*B.S'*(B.U'*A.V))
     else
-        return SVDLikeApproximation(A.U*A.S*(A.V'*B.U), B.S, B.V)
+        return SVDLikeRepresentation(A.U*A.S*(A.V'*B.U), B.S, B.V)
     end
 end
-*(A::SVDLikeApproximation, α::Number) = SVDLikeApproximation(A.U, α*A.S, A.V) 
-*(α::Number, A::SVDLikeApproximation) = SVDLikeApproximation(A.U, α*A.S, A.V)
-*(A::SVDLikeApproximation, v::AbstractVector) = A.U*(A.S*(A.V'*v))
-*(v::AbstractVector, A::SVDLikeApproximation) = ((v*A.U)*A.S)*A.V'
+*(A::SVDLikeRepresentation, α::Number) = SVDLikeRepresentation(A.U, α*A.S, A.V) 
+*(α::Number, A::SVDLikeRepresentation) = SVDLikeRepresentation(A.U, α*A.S, A.V)
+*(A::SVDLikeRepresentation, v::AbstractVector) = A.U*(A.S*(A.V'*v))
+*(v::AbstractVector, A::SVDLikeRepresentation) = ((v*A.U)*A.S)*A.V'
 
 # default to TwoFactorRepresentation
-*(A::TwoFactorRepresentation, B::SVDLikeApproximation) = A*TwoFactorRepresentation(B)
-*(A::SVDLikeApproximation, B::TwoFactorRepresentation) = TwoFactorRepresentation(B)*A
+*(A::TwoFactorRepresentation, B::SVDLikeRepresentation) = A*TwoFactorRepresentation(B)
+*(A::SVDLikeRepresentation, B::TwoFactorRepresentation) = TwoFactorRepresentation(B)*A
 
 ## + 
-+(A::SVDLikeApproximation, B::SVDLikeApproximation) = SVDLikeApproximation(hcat(A.U, B.U), blockdiagonal(A.S, B.S),hcat(A.V, B.V))
-+(A::AbstractMatrix, B::SVDLikeApproximation) = A + Matrix(B)
-+(A::SVDLikeApproximation, B::AbstractMatrix) = Matrix(A) + B
--(A::SVDLikeApproximation, B::SVDLikeApproximation) = SVDLikeApproximation(hcat(A.U, B.U), blockdiagonal(A.S, -B.S),hcat(A.V, B.V))
--(A::AbstractMatrix, B::SVDLikeApproximation) = A - Matrix(B)
--(A::SVDLikeApproximation, B::AbstractMatrix) = Matrix(A) - B
++(A::SVDLikeRepresentation, B::SVDLikeRepresentation) = SVDLikeRepresentation(hcat(A.U, B.U), blockdiagonal(A.S, B.S),hcat(A.V, B.V))
++(A::AbstractMatrix, B::SVDLikeRepresentation) = A + Matrix(B)
++(A::SVDLikeRepresentation, B::AbstractMatrix) = Matrix(A) + B
+-(A::SVDLikeRepresentation, B::SVDLikeRepresentation) = SVDLikeRepresentation(hcat(A.U, B.U), blockdiagonal(A.S, -B.S),hcat(A.V, B.V))
+-(A::AbstractMatrix, B::SVDLikeRepresentation) = A - Matrix(B)
+-(A::SVDLikeRepresentation, B::AbstractMatrix) = Matrix(A) - B
 
 # default to TwoFactorRepresentation
-+(A::TwoFactorRepresentation, B::SVDLikeApproximation) = A+TwoFactorRepresentation(B)
-+(A::SVDLikeApproximation, B::TwoFactorRepresentation) = B+A
--(A::TwoFactorRepresentation, B::SVDLikeApproximation) = A-TwoFactorRepresentation(B)
--(A::SVDLikeApproximation, B::TwoFactorRepresentation) = TwoFactorRepresentation(A)-B
++(A::TwoFactorRepresentation, B::SVDLikeRepresentation) = A+TwoFactorRepresentation(B)
++(A::SVDLikeRepresentation, B::TwoFactorRepresentation) = B+A
+-(A::TwoFactorRepresentation, B::SVDLikeRepresentation) = A-TwoFactorRepresentation(B)
+-(A::SVDLikeRepresentation, B::TwoFactorRepresentation) = TwoFactorRepresentation(A)-B
 
 ## .*
-function hadamard(A::SVDLikeApproximation, B::SVDLikeApproximation) 
+function hadamard(A::SVDLikeRepresentation, B::SVDLikeRepresentation) 
     @assert size(A) == size(B) "elementwise product is only defined between matrices of equal dimension"
     rA, rB = rank(A), rank(B)
     r_new = rA*rB
@@ -104,16 +104,16 @@ function hadamard(A::SVDLikeApproximation, B::SVDLikeApproximation)
             S[k,l] = A.S[r1,k1]*B.S[r2,k2]
         end
     end
-    return SVDLikeApproximation(U,S,V)
+    return SVDLikeRepresentation(U,S,V)
 end
 
 # default to TwoFactorRepresentation
-hadamard(A::TwoFactorRepresentation, B::SVDLikeApproximation) = hadamard(A, TwoFactorRepresentation(B))
-hadamard(A::SVDLikeApproximation, B::TwoFactorRepresentation) = hadamard(TwoFactorRepresentation(A), B)
+hadamard(A::TwoFactorRepresentation, B::SVDLikeRepresentation) = hadamard(A, TwoFactorRepresentation(B))
+hadamard(A::SVDLikeRepresentation, B::TwoFactorRepresentation) = hadamard(TwoFactorRepresentation(A), B)
 
 ## .^2
 # very suboptimal
-function elpow(A::SVDLikeApproximation, d::Int)
+function elpow(A::SVDLikeRepresentation, d::Int)
     @assert d >= 1 "elementwise power operation 'elpow' only defined for positive powers"
     r = rank(A)
     r_new = binomial(r+d-1, d)
@@ -142,45 +142,45 @@ function elpow(A::SVDLikeApproximation, d::Int)
             end
         end
     end
-    return SVDLikeApproximation(U,S,V)
+    return SVDLikeRepresentation(U,S,V)
 end
 
 ## special cases
-function add_to_cols(LRA::SVDLikeApproximation, v::AbstractVector)
-    return LRA + SVDLikeApproximation(v, ones(eltype(v), 1, 1), ones(eltype(v), size(LRA, 2)))
+function add_to_cols(LRA::SVDLikeRepresentation, v::AbstractVector)
+    return LRA + SVDLikeRepresentation(v, ones(eltype(v), 1, 1), ones(eltype(v), size(LRA, 2)))
 end
 
-function multiply_cols(LRA::SVDLikeApproximation, v::AbstractVector)
-    return hadamard(LRA, SVDLikeApproximation(v, ones(eltype(v), 1, 1), ones(eltype(v), size(LRA, 2))))
+function multiply_cols(LRA::SVDLikeRepresentation, v::AbstractVector)
+    return hadamard(LRA, SVDLikeRepresentation(v, ones(eltype(v), 1, 1), ones(eltype(v), size(LRA, 2))))
 end
 
-function add_to_rows(LRA::SVDLikeApproximation, v::AbstractVector)
-    return LRA + SVDLikeApproximation(ones(eltype(v), size(LRA, 1)), ones(eltype(v), 1, 1), v)
+function add_to_rows(LRA::SVDLikeRepresentation, v::AbstractVector)
+    return LRA + SVDLikeRepresentation(ones(eltype(v), size(LRA, 1)), ones(eltype(v), 1, 1), v)
 end
 
-function multiply_rows(LRA::SVDLikeApproximation, v::AbstractVector)
-    return hadamard(LRA, SVDLikeApproximation(ones(eltype(v), size(LRA, 1)), ones(eltype(v), 1, 1), v))
+function multiply_rows(LRA::SVDLikeRepresentation, v::AbstractVector)
+    return hadamard(LRA, SVDLikeRepresentation(ones(eltype(v), size(LRA, 1)), ones(eltype(v), 1, 1), v))
 end
 
-function add_scalar(LRA::SVDLikeApproximation, α::Number)
-    return LRA + SVDLikeApproximation(ones(eltype(α), size(LRA, 1)), [α], ones(eltype(α), size(LRA,2)))
+function add_scalar(LRA::SVDLikeRepresentation, α::Number)
+    return LRA + SVDLikeRepresentation(ones(eltype(α), size(LRA, 1)), [α], ones(eltype(α), size(LRA,2)))
 end
 
 ## rounding
-function svd(A::SVDLikeApproximation, alg=QR())
+function svd(A::SVDLikeRepresentation, alg=QR())
     orthonormalize!(A, alg)
     U_, S_, V_ = svd(A.S)
-    return SVDLikeApproximation(A.U*U_, S_, A.V*V_)
+    return SVDLikeRepresentation(A.U*U_, S_, A.V*V_)
 end
 
 function svd(A::TwoFactorRepresentation, alg=QR())
     orthonormalize!(A, alg)
     U_, S_, V_ = svd(A.Z)
-    return SVDLikeApproximation(A.U*U_, S_, V_)
+    return SVDLikeRepresentation(A.U*U_, S_, V_)
 end
 
 ## orthonormalization 
-function orthonormalize!(LRA::SVDLikeApproximation, alg)
+function orthonormalize!(LRA::SVDLikeRepresentation, alg)
     orthonormalize!(LRA.U, LRA.S', alg)
     orthonormalize!(LRA.V, LRA.S, alg)
 end

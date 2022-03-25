@@ -35,7 +35,7 @@ end
         S = randn(10, 10)
         V = randn(1000, 10)
         X = U*S*V'
-        LRA = SVDLikeApproximation(U,S,V)
+        LRA = SVDLikeRepresentation(U,S,V)
         orthonormalize!(LRA, alg)
         @test maximum(abs.(LRA.U'*LRA.U-I)) + maximum(abs.(LRA.V'*LRA.V-I)) <= 1e-8
         @test maximum(abs.(LRA - X)) <= 1e-8

@@ -38,7 +38,7 @@ vcat(A::TwoFactorRepresentation, B::TwoFactorRepresentation) = TwoFactorRepresen
 adjoint(LRA::TwoFactorRepresentation) = TwoFactorRepresentation(conj(LRA.Z),conj(LRA.U)) 
 
 # Is the following alternative better?
-# *(A::SVDLikeApproximation, B::SVDLikeApproximation) = SVDLikeApproximation(A.U, A.S*(A.V'*B.U)*B.S, B.V)
+# *(A::SVDLikeRepresentation, B::SVDLikeRepresentation) = SVDLikeRepresentation(A.U, A.S*(A.V'*B.U)*B.S, B.V)
 # it would preserve orthonormality of range/co-range factors but make core rectangular and increase the storage cost unnecessarily.
 
 
