@@ -26,7 +26,7 @@ end
         U = randn(1000, 10)
         Z = randn(1000, 10)
         X = U*Z'
-        LRA = TwoFactorApproximation(U,Z)
+        LRA = TwoFactorRepresentation(U,Z)
         orthonormalize!(LRA, alg)
         @test maximum(abs.(LRA.U'*LRA.U - I)) <= 1e-8
         @test maximum(abs.(LRA - X)) <= 1e-8

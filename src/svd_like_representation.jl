@@ -37,11 +37,11 @@ hcat(A::SVDLikeApproximation, B::SVDLikeApproximation) = SVDLikeApproximation(hc
 vcat(A::SVDLikeApproximation, B::SVDLikeApproximation) = SVDLikeApproximation(blockdiagonal(A.U, B.U), blockdiagonal(A.S, B.S), hcat(A.V, B.V))
 
 # simple support of adjoints, probably not ideal though
-adjoint(LRA::SVDLikeApproximation) = TwoFactorApproximation(conj(LRA.V),LRA.S',conj(LRA.U)) 
+adjoint(LRA::SVDLikeApproximation) = TwoFactorRepresentation(conj(LRA.V),LRA.S',conj(LRA.U)) 
 
 # converting between both representations
-TwoFactorApproximation(A::SVDLikeApproximation) = TwoFactorApproximation(A.U, A.V*A.S')
-function SVDLikeApproximation(A::TwoFactorApproximation) 
+TwoFactorRepresentation(A::SVDLikeApproximation) = TwoFactorRepresentation(A.U, A.V*A.S')
+function SVDLikeApproximation(A::TwoFactorRepresentation) 
     U, S, V = svd(A.Z)
     return SVDLikeApproximation(A.U*V, S', U)
 end
@@ -63,9 +63,9 @@ end
 *(A::SVDLikeApproximation, v::AbstractVector) = A.U*(A.S*(A.V'*v))
 *(v::AbstractVector, A::SVDLikeApproximation) = ((v*A.U)*A.S)*A.V'
 
-# default to TwoFactorApproximation
-*(A::TwoFactorApproximation, B::SVDLikeApproximation) = A*TwoFactorApproximation(B)
-*(A::SVDLikeApproximation, B::TwoFactorApproximation) = TwoFactorApproximation(B)*A
+# default to TwoFactorRepresentation
+*(A::TwoFactorRepresentation, B::SVDLikeApproximation) = A*TwoFactorRepresentation(B)
+*(A::SVDLikeApproximation, B::TwoFactorRepresentation) = TwoFactorRepresentation(B)*A
 
 ## + 
 +(A::SVDLikeApproximation, B::SVDLikeApproximation) = SVDLikeApproximation(hcat(A.U, B.U), blockdiagonal(A.S, B.S),hcat(A.V, B.V))
@@ -75,11 +75,11 @@ end
 -(A::AbstractMatrix, B::SVDLikeApproximation) = A - Matrix(B)
 -(A::SVDLikeApproximation, B::AbstractMatrix) = Matrix(A) - B
 
-# default to TwoFactorApproximation
-+(A::TwoFactorApproximation, B::SVDLikeApproximation) = A+TwoFactorApproximation(B)
-+(A::SVDLikeApproximation, B::TwoFactorApproximation) = B+A
--(A::TwoFactorApproximation, B::SVDLikeApproximation) = A-TwoFactorApproximation(B)
--(A::SVDLikeApproximation, B::TwoFactorApproximation) = TwoFactorApproximation(A)-B
+# default to TwoFactorRepresentation
++(A::TwoFactorRepresentation, B::SVDLikeApproximation) = A+TwoFactorRepresentation(B)
++(A::SVDLikeApproximation, B::TwoFactorRepresentation) = B+A
+-(A::TwoFactorRepresentation, B::SVDLikeApproximation) = A-TwoFactorRepresentation(B)
+-(A::SVDLikeApproximation, B::TwoFactorRepresentation) = TwoFactorRepresentation(A)-B
 
 ## .*
 function hadamard(A::SVDLikeApproximation, B::SVDLikeApproximation) 
@@ -107,9 +107,9 @@ function hadamard(A::SVDLikeApproximation, B::SVDLikeApproximation)
     return SVDLikeApproximation(U,S,V)
 end
 
-# default to TwoFactorApproximation
-hadamard(A::TwoFactorApproximation, B::SVDLikeApproximation) = hadamard(A, TwoFactorApproximation(B))
-hadamard(A::SVDLikeApproximation, B::TwoFactorApproximation) = hadamard(TwoFactorApproximation(A), B)
+# default to TwoFactorRepresentation
+hadamard(A::TwoFactorRepresentation, B::SVDLikeApproximation) = hadamard(A, TwoFactorRepresentation(B))
+hadamard(A::SVDLikeApproximation, B::TwoFactorRepresentation) = hadamard(TwoFactorRepresentation(A), B)
 
 ## .^2
 # very suboptimal
@@ -173,7 +173,7 @@ function svd(A::SVDLikeApproximation, alg=QR())
     return SVDLikeApproximation(A.U*U_, S_, A.V*V_)
 end
 
-function svd(A::TwoFactorApproximation, alg=QR())
+function svd(A::TwoFactorRepresentation, alg=QR())
     orthonormalize!(A, alg)
     U_, S_, V_ = svd(A.Z)
     return SVDLikeApproximation(A.U*U_, S_, V_)
