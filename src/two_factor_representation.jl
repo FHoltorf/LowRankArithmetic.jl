@@ -12,7 +12,7 @@ export TwoFactorRepresentation
         * QR()
         * SVD()
 """
-mutable struct TwoFactorRepresentation{uType, zType} <: AbstractLowRankApproximation
+mutable struct TwoFactorRepresentation{uType, zType} <: AbstractLowRankRepresentation
     U::uType
     Z::zType                              
 end

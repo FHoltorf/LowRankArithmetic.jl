@@ -13,7 +13,7 @@ export SVDLikeRepresentation
         * SVD()
         * GradientDescent()
 """
-mutable struct SVDLikeRepresentation{uType, sType, vType} <: AbstractLowRankApproximation
+mutable struct SVDLikeRepresentation{uType, sType, vType} <: AbstractLowRankRepresentation
     U::uType
     S::sType
     V::vType
