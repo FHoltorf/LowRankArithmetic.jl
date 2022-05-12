@@ -28,5 +28,5 @@ Note, however, that neither U and V need to be orthogonal, nor are S and Z requi
 
 LowRankArithmetic.jl further supports efficient & robust svd-based rounding procedures to reduce the rank of a given low rank factorization. Also efficient Gram-Schmidt-, QR-, SVD-, and gradient flow-based reorthonormalization procedures for the U and V factors are available. 
 
-## Acknowledgments
-This work is supported by NSF Award PHY-2028125 "SWQU: Composable Next Generation Software Framework for Space Weather Data Assimilation and Uncertainty Quantification"
+## Acknowledgements
+This work is supported by NSF Award PHY-2028125 "SWQU: Composable Next Generation Software Framework for Space Weather Data Assimilation and Uncertainty Quantification".
