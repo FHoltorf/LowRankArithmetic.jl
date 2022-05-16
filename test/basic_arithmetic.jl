@@ -1,6 +1,6 @@
 using LinearAlgebra
 
-@testset "Two Factor Approximation - Basic Arithmetic" begin
+@testset "TwoFactorRepresentation - Basic Arithmetic" begin
     U1, Z1 = randn(100, 4), randn(1000, 4)
 
     U2, Z2 = randn(100, 2), randn(1000, 2)
@@ -69,7 +69,7 @@ using LinearAlgebra
     @test all(Matrix(vcat(A,B)) .== vcat(Matrix(A), Matrix(B)))
 end
 
-@testset "SVD Like Approximation - Basic Arithmetic" begin
+@testset "SVDLikeRepresentation - Basic Arithmetic" begin
     U1, S1, V1 = randn(100, 4), randn(4,4), randn(1000, 4)
 
     U2, S2, V2 = randn(100, 2), randn(2,2), randn(1000, 2)

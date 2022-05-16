@@ -162,6 +162,13 @@ function qr(A::TwoFactorRepresentation, alg=QRFact())
     Q_, R_ = qr(A.Z')
     return TwoFactorRepresentation(A.U*Q_, R_')
 end
+
+function round(A::TwoFactorRepresentation, alg = SVDFact(); tol = sqrt(eps(eltype(A.U))), rmax::Int = rank(A), alg_orthonormalize = QRFact())
+    orthonormalize!(A, alg_orthonormalize)
+    Z_lr = truncated_svd(A.Z, alg; tol=tol, rmax = rmax) 
+    return TwoFactorRepresentation(A.U*Z_lr.V, Z_lr.U*Z_lr.S)
+end
+
 ## orthonormalization 
 function orthonormalize!(LRA::TwoFactorRepresentation, alg)
     orthonormalize!(LRA.U, LRA.Z, alg)
