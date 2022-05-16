@@ -37,11 +37,6 @@ vcat(A::TwoFactorRepresentation, B::TwoFactorRepresentation) = TwoFactorRepresen
 # simple support of adjoints, probably not ideal though
 adjoint(LRA::TwoFactorRepresentation) = TwoFactorRepresentation(conj(LRA.Z),conj(LRA.U)) 
 
-# Is the following alternative better?
-# *(A::SVDLikeRepresentation, B::SVDLikeRepresentation) = SVDLikeRepresentation(A.U, A.S*(A.V'*B.U)*B.S, B.V)
-# it would preserve orthonormality of range/co-range factors but make core rectangular and increase the storage cost unnecessarily.
-
-
 ## *
 *(A::AbstractMatrix, B::TwoFactorRepresentation) = TwoFactorRepresentation(A*B.U, B.Z)
 *(A::TwoFactorRepresentation, B::AbstractMatrix) = TwoFactorRepresentation(A.U, B'*A.Z)
@@ -128,7 +123,7 @@ function add_to_cols(A, v::AbstractVector)
 end
 
 function multiply_cols(A, v::AbstractVector)
-    return p .* A
+    return v .* A
 end
 
 function add_to_rows(LRA::TwoFactorRepresentation, v::AbstractVector)
@@ -145,10 +140,6 @@ end
 
 function multiply_rows(A, v)
     return A .* v'
-end
-
-function multiply_rows(A, v::Number)
-    return v*A 
 end
 
 function add_scalar(LRA::TwoFactorRepresentation, α::Number)
