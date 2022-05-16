@@ -9,8 +9,8 @@ export TwoFactorRepresentation
     are supported (multiplication, addition, etc.). In order to reorthonormalize U, simply call `orthonormalize!(X, alg)`
     where alg refers to the algorithm used to compute the orthonormalization: 
         * GradientDescent() 
-        * QR()
-        * SVD()
+        * QRFact()
+        * SVDFact()
 """
 mutable struct TwoFactorRepresentation{uType, zType} <: AbstractLowRankRepresentation
     U::uType
@@ -159,6 +159,18 @@ function add_scalar(A, α::Number)
     return A .+ α
 end
 
+## rounding
+function svd(A::TwoFactorRepresentation, alg=QRFact())
+    orthonormalize!(A, alg)
+    U_, S_, V_ = svd(A.Z)
+    return SVDLikeRepresentation(A.U*U_, S_, V_)
+end
+
+function qr(A::TwoFactorRepresentation, alg=QRFact())
+    orthonormalize!(A, alg)
+    Q_, R_ = qr(A.Z')
+    return TwoFactorRepresentation(A.U*Q_, R_')
+end
 ## orthonormalization 
 function orthonormalize!(LRA::TwoFactorRepresentation, alg)
     orthonormalize!(LRA.U, LRA.Z, alg)

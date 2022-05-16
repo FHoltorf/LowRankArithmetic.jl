@@ -1,8 +1,8 @@
 @testset "Matrix orthonormalization tests" begin
-    algs = [LowRankArithmetic.QR(),
-            LowRankArithmetic.SVD(), 
-            LowRankArithmetic.SecondMomentMatching(),
-            LowRankArithmetic.GramSchmidt()]
+    algs = [QRFact(),
+            SVDFact(), 
+            SecondMomentMatching(),
+            GramSchmidt()]
     for alg in algs
         U = randn(1000, 10)
         Z = randn(1000, 10)
@@ -17,11 +17,11 @@
     end
 end
 
-@testset "LRA Orthonormalization tests" begin
-    algs = [LowRankArithmetic.QR(),
-            LowRankArithmetic.SVD(), 
-            LowRankArithmetic.SecondMomentMatching(),
-            LowRankArithmetic.GramSchmidt()]
+@testset "LRA orthonormalization tests" begin
+    algs = [QRFact(),
+            SVDFact(), 
+            SecondMomentMatching(),
+            GramSchmidt()]
     for alg in algs
         U = randn(1000, 10)
         Z = randn(1000, 10)

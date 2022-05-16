@@ -1,4 +1,4 @@
-export GradientDescent, SecondMomentMatching, orthonormalize!
+export GradientDescent, SecondMomentMatching, GramSchmidt, QRFact, SVDFact, orthonormalize!
 # QR, SVD not exported due to conflict with LinearAlgebra identifiers. 
 
 struct GradientDescent
@@ -11,9 +11,9 @@ struct GradientDescent
     end
 end
 
-struct QR end
+struct QRFact end
 
-struct SVD end
+struct SVDFact end
 
 struct SecondMomentMatching end
 
@@ -79,23 +79,23 @@ function orthonormalize!(U::AbstractMatrix, Z::AbstractMatrix, ::SecondMomentMat
     Z .= Z*V*Diagonal(sqrt.(Λ)) * V'
 end
 
-function orthonormalize!(U::AbstractMatrix, ::QR)
+function orthonormalize!(U::AbstractMatrix, ::QRFact)
     Q, _ = qr!(U)
     U .= Matrix(Q)
 end
 
-function orthonormalize!(U::AbstractMatrix, Z::AbstractMatrix, ::QR)
+function orthonormalize!(U::AbstractMatrix, Z::AbstractMatrix, ::QRFact)
     Q, R = qr!(U)
     U .= Matrix(Q)
     Z .= Z*R'
 end
 
-function orthonormalize!(U::AbstractMatrix, ::SVD)
+function orthonormalize!(U::AbstractMatrix, ::SVDFact)
     Q, _, _ = svd!(U)
     U .= Q
 end
 
-function orthonormalize!(U::AbstractMatrix, Z::AbstractMatrix, ::SVD)
+function orthonormalize!(U::AbstractMatrix, Z::AbstractMatrix, ::SVDFact)
     Q, S, V = svd!(U)
     U .= Q
     Z .= Z*V*Diagonal(S)'

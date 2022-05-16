@@ -9,8 +9,8 @@ export SVDLikeRepresentation
     orthogonality of U and V is not guaranteed to and in fact will rarely be preserved under the operations that
     are supported (multiplication, addition, etc.). In order to reorthonormalize U and V, simply call `orthonormalize!(X, alg)`
     where alg refers to the algorithm used to compute the orthonormalization: 
-        * QR()
-        * SVD()
+        * QRFact()
+        * SVDFact()
         * GradientDescent()
 """
 mutable struct SVDLikeRepresentation{uType, sType, vType} <: AbstractLowRankRepresentation
@@ -167,16 +167,16 @@ function add_scalar(LRA::SVDLikeRepresentation, α::Number)
 end
 
 ## rounding
-function svd(A::SVDLikeRepresentation, alg=QR())
+function svd(A::SVDLikeRepresentation, alg=QRFact())
     orthonormalize!(A, alg)
     U_, S_, V_ = svd(A.S)
     return SVDLikeRepresentation(A.U*U_, S_, A.V*V_)
 end
 
-function svd(A::TwoFactorRepresentation, alg=QR())
-    orthonormalize!(A, alg)
-    U_, S_, V_ = svd(A.Z)
-    return SVDLikeRepresentation(A.U*U_, S_, V_)
+function qr(A::SVDLikeRepresentation, alg=QRFact())
+    orthonormalize!(A.U, A.S, alg)
+    U_, R_ = qr(A.S*A.V')
+    return TwoFactorRepresentation(A.U*U_, R_')
 end
 
 ## orthonormalization 

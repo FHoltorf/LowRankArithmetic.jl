@@ -1,15 +1,18 @@
-export truncated_svd
+export truncated_svd, TSVD
 
-function truncated_svd(A::AbstractMatrix, r::Int)
-    @assert r <= minimum(size(A)) "truncated rank can not exceed the maximum rank of A"
+struct TSVD end
+
+truncated_svd(A::AbstractMatrix, alg = SVDFact(); tol = sqrt(eps(eltype(A))), rmax = minimum(size(A))) = truncated_svd(A, alg, tol, rmax)
+
+function truncated_svd(A::AbstractMatrix, ::SVDFact, tol, rmax::Int)
     U, S, V = svd(A)
-    return SVDLikeRepresentation(U[:,1:r], Matrix(Diagonal(S[1:r])), V[:,1:r])
+    r = min(truncate_to_tolerance(S, tol), rmax)
+    return SVDLikeRepresentation(U[:,1:r], diagm(S[1:r]), V[:,1:r])
 end
 
-function truncated_svd(A::AbstractMatrix; ϵ = 0)
-    U, S, V = svd(A)
-    r = truncate_to_tolerance(S, ϵ)
-    return SVDLikeRepresentation(U[:,1:r], Matrix(Diagonal(S[1:r])), V[:,1:r])
+function truncated_svd(A::AbstractMatrix, ::TSVD, tol, rmax::Int)
+    U, S, V = tsvd(A, rmax)
+    return SVDLikeRepresentation(U, diagm(S), V)
 end
 
 function truncate_to_tolerance(S, tol)
