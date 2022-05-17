@@ -1,6 +1,6 @@
 name = "LowRankArithmetic"
 uuid = "8016d1d1-7a3b-4ad2-b79e-5984174ed314"
-authors = ["Acme Corp"]
+authors = ["Flemming Holtorf"]
 version = "0.1.0"
 
 [deps]
