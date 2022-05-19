@@ -2,15 +2,19 @@ export truncated_svd, TSVD
 
 struct TSVD end
 
-truncated_svd(A::AbstractMatrix, alg = SVDFact(); tol = sqrt(eps(eltype(A))), rmax = minimum(size(A))) = truncated_svd(A, alg, tol, rmax)
+truncated_svd(A::AbstractMatrix, alg = SVDFact(); tol = sqrt(eps(eltype(A))), rmin = 1, rmax = minimum(size(A))) = truncated_svd(A, alg, tol, rmin, rmax)
+function truncated_svd(A::AbstractMatrix, rank::Int, alg = SVDFact()) 
+    @assert rank <= minimum(size(A)) "rank ≤ min(n,m)"
+    truncated_svd(A, alg; rmin = rank, rmax = rank)
+end
 
-function truncated_svd(A::AbstractMatrix, ::SVDFact, tol, rmax::Int)
+function truncated_svd(A::AbstractMatrix, ::SVDFact, tol, rmin::Int, rmax::Int)
     U, S, V = svd(A)
-    r = min(truncate_to_tolerance(S, tol), rmax)
+    r = (rmax == rmin) ? rmax : max(min(truncate_to_tolerance(S, tol), rmax), rmin)
     return SVDLikeRepresentation(U[:,1:r], diagm(S[1:r]), V[:,1:r])
 end
 
-function truncated_svd(A::AbstractMatrix, ::TSVD, tol, rmax::Int)
+function truncated_svd(A::AbstractMatrix, ::TSVD, tol, rmin::Int, rmax::Int)
     U, S, V = tsvd(A, rmax)
     return SVDLikeRepresentation(U, diagm(S), V)
 end

@@ -1,3 +1,32 @@
+@testset "Truncated SVD" begin
+    Q = diagm([2.0^(-j) for j in 1:100])
+    tol = sum(2.0^(-j) for j in 27:100)
+
+    Q_red = truncated_svd(Q, tol = tol)
+    @test rank(Q_red) == 26
+    @test norm(Matrix(Q_red) - diagm([j <= 26 ? 2.0^(-j) : 0 for j in 1:100])) < 1e-8
+
+    Q_red = truncated_svd(Q, rmin = 30)
+    @test rank(Q_red) == 30
+    @test norm(Matrix(Q_red) - diagm([j <= 30 ? 2.0^(-j) : 0 for j in 1:100])) < 1e-10
+
+    Q_red = truncated_svd(Q, rmax = 12)
+    @test rank(Q_red) == 12
+    @test norm(Matrix(Q_red) - diagm([j <= 12 ? 2.0^(-j) : 0 for j in 1:100])) < 1e-10
+
+    Q_red = truncated_svd(Q, TSVD(), rmax = 12)
+    @test rank(Q_red) == 12
+    @test norm(Matrix(Q_red) - diagm([j <= 12 ? 2.0^(-j) : 0 for j in 1:100])) < 1e-10
+
+    Q_red = truncated_svd(Q, 12)
+    @test rank(Q_red) == 12
+    @test norm(Matrix(Q_red) - diagm([j <= 12 ? 2.0^(-j) : 0 for j in 1:100])) < 1e-10
+
+    Q_red = truncated_svd(Q, 12, TSVD())
+    @test rank(Q_red) == 12 
+    @test norm(Matrix(Q_red) - diagm([j <= 12 ? 2.0^(-j) : 0 for j in 1:100])) < 1e-10
+end
+
 @testset "Rounding SVDLikeRepresentation" begin
     Q = qr(randn(100,100)).Q
     D = Diagonal([2.0^(-j) for j in 1:100])

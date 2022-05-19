@@ -179,11 +179,18 @@ function qr(A::SVDLikeRepresentation, alg=QRFact())
     return TwoFactorRepresentation(A.U*U_, R_')
 end
 
-function round(A::SVDLikeRepresentation, alg = SVDFact(); tol = sqrt(eps(eltype(A.U))), rmax::Int = rank(A), alg_orthonormalize = QRFact())
+function round(A::SVDLikeRepresentation, alg = SVDFact(); tol = sqrt(eps(eltype(A.U))), rmin::Int = 1, rmax::Int = rank(A), alg_orthonormalize = QRFact())
     orthonormalize!(A, alg_orthonormalize)
-    S_lr = truncated_svd(A.S, alg, tol=tol, rmax=rmax)
+    S_lr = truncated_svd(A.S, alg, tol = tol, rmin = rmin, rmax = rmax)
     return SVDLikeRepresentation(A.U*S_lr.U, S_lr.S, A.V*S_lr.V)
 end
+
+function round(A::SVDLikeRepresentation, rank::Int, alg = SVDFact(); alg_orthonormalize=QRFact())
+    orthonormalize!(A, alg_orthonormalize)
+    S_lr = truncated_svd(A.S, rank, alg)
+    return SVDLikeRepresentation(A.U*S_lr.U, S_lr.S, A.V*S_lr.V)
+end
+
 ## orthonormalization 
 function orthonormalize!(LRA::SVDLikeRepresentation, alg)
     orthonormalize!(LRA.U, LRA.S', alg)
