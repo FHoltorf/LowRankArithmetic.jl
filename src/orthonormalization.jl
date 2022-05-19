@@ -49,13 +49,13 @@ function orthonormalize!(U::AbstractMatrix, Z::AbstractMatrix, alg::GradientDesc
     Ainv = Matrix{eltype(K)}(I, r, r)
     dA = similar(A)
     iter = 0
-    ϵ = norm(A'*K*A - I)^2
+    ϵ = norm(A'*K*A - I)
     while ϵ > atol && ϵ > r*rtol && iter < maxiter
         dA .= - K*A*(A'*K*A - I)
         A .+= μ*dA
         Ainv .-= μ*Ainv*dA*Ainv
         iter += 1
-        ϵ = norm(A'*K*A - I)^2
+        ϵ = norm(A'*K*A - I)
     end
     if iter == maxiter
         @warn "Gradient flow orthonormalization did not converge. 
