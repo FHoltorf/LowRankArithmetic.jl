@@ -1,7 +1,7 @@
 name = "LowRankArithmetic"
 uuid = "8016d1d1-7a3b-4ad2-b79e-5984174ed314"
 authors = ["Flemming Holtorf"]
-version = "0.1.1"
+version = "0.1.2"
 
 [deps]
 Combinatorics = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
