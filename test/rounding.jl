@@ -30,7 +30,7 @@ end
 @testset "Rounding SVDLikeRepresentation" begin
     Q = qr(randn(100,100)).Q
     D = Diagonal([2.0^(-j) for j in 1:100])
-    A = exp(Matrix(Q))*D*exp(Matrix(transpose(Q)))
+    A = exp(Matrix(Q))*D*exp(Matrix(Q'))
     LRA = truncated_svd(A, tol = 0.01)
 
     # svd based rounding 
