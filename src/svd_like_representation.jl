@@ -170,7 +170,7 @@ end
 function svd(A::SVDLikeRepresentation, alg=QRFact())
     orthonormalize!(A, alg)
     U_, S_, V_ = svd(A.S)
-    return SVDLikeRepresentation(A.U*U_, S_, A.V*V_)
+    return SVDLikeRepresentation(A.U*U_, Diagonal(S_), A.V*V_)
 end
 
 function qr(A::SVDLikeRepresentation, alg=QRFact())
