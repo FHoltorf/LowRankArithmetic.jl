@@ -151,14 +151,14 @@ function add_scalar(A, α::Number)
 end
 
 ## rounding
-function svd(A::TwoFactorRepresentation, alg=QRFact())
-    orthonormalize!(A, alg)
-    U_, S_, V_ = svd(A.Z)
-    return SVDLikeRepresentation(A.U*U_, S_, V_)
+function svd(A::TwoFactorRepresentation; alg_orthonormalize=QRFact())
+    orthonormalize!(A, alg_orthonormalize)
+    U_, S_, V_ = svd(A.Z')
+    return SVDLikeRepresentation(A.U*U_, Diagonal(S_), V_)
 end
 
-function qr(A::TwoFactorRepresentation, alg=QRFact())
-    orthonormalize!(A, alg)
+function qr(A::TwoFactorRepresentation; alg_orthonormalize=QRFact())
+    orthonormalize!(A, alg_orthonormalize)
     Q_, R_ = qr(A.Z')
     return TwoFactorRepresentation(A.U*Q_, R_')
 end
@@ -173,6 +173,14 @@ function round(A::TwoFactorRepresentation, rank::Int, alg = SVDFact(); alg_ortho
     orthonormalize!(A, alg_orthonormalize)
     Z_lr = truncated_svd(A.Z, rank, alg) 
     return TwoFactorRepresentation(A.U*Z_lr.V, Z_lr.U*Z_lr.S)
+end
+
+function truncated_svd(A::TwoFactorRepresentation, ::TSVD; 
+                       tol = 1e-8, rmin = 1, rmax = minimum(size(A)), 
+                       alg_orthonormalize = QRFact()) 
+    orthonormalize!(A, alg_orthonormalize)
+    U_, S_, V_ = tsvd(A.Z',rmax) 
+    return SVDLikeRepresentation(A.U*U_, Diagonal(S_), V_)
 end
 
 ## orthonormalization 

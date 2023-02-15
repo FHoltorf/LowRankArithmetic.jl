@@ -4,6 +4,8 @@ using Combinatorics, LinearAlgebra, UnPack, TSVD
 import Base: +, -, *, size, Matrix, getindex, hcat, vcat, axes, round, broadcasted, BroadcastStyle
 import LinearAlgebra: rank, adjoint, svd, qr
 
+struct TSVD end
+
 abstract type AbstractLowRankRepresentation end
 
 # catch-all-cases

@@ -167,8 +167,8 @@ function add_scalar(LRA::SVDLikeRepresentation, α::Number)
 end
 
 ## rounding
-function svd(A::SVDLikeRepresentation, alg=QRFact())
-    orthonormalize!(A, alg)
+function svd(A::SVDLikeRepresentation; alg_orthonormalize=QRFact())
+    orthonormalize!(A, alg_orthonormalize)
     U_, S_, V_ = svd(A.S)
     return SVDLikeRepresentation(A.U*U_, Diagonal(S_), A.V*V_)
 end
@@ -189,6 +189,14 @@ function round(A::SVDLikeRepresentation, rank::Int, alg = SVDFact(); alg_orthono
     orthonormalize!(A, alg_orthonormalize)
     S_lr = truncated_svd(A.S, rank, alg)
     return SVDLikeRepresentation(A.U*S_lr.U, S_lr.S, A.V*S_lr.V)
+end
+
+function truncated_svd(A::SVDLikeRepresentation, ::TSVD; 
+                       tol = 1e-8, rmin = 1, rmax = minimum(size(A)), 
+                       alg_orthonormalize = QRFact()) 
+    orthonormalize!(A, alg_orthonormalize)
+    U_, S_, V_ = tsvd(A.S,rmax) 
+    return SVDLikeRepresentation(A.U*U_, Diagonal(S_), A.V*V_)
 end
 
 ## orthonormalization 

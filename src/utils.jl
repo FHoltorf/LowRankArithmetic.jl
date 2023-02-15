@@ -1,22 +1,33 @@
 export truncated_svd, TSVD
 
-struct TSVD end
-
 truncated_svd(A::AbstractMatrix, alg = SVDFact(); tol = sqrt(eps(eltype(A))), rmin = 1, rmax = minimum(size(A))) = truncated_svd(A, alg, tol, rmin, rmax)
+
 function truncated_svd(A::AbstractMatrix, rank::Int, alg = SVDFact()) 
     @assert rank <= minimum(size(A)) "rank ≤ min(n,m)"
-    truncated_svd(A, alg; rmin = rank, rmax = rank)
+    return truncated_svd(A, alg; rmin = rank, rmax = rank)
 end
 
 function truncated_svd(A::AbstractMatrix, ::SVDFact, tol, rmin::Int, rmax::Int)
     U, S, V = svd(A)
     r = (rmax == rmin) ? rmax : max(min(truncate_to_tolerance(S, tol), rmax), rmin)
-    return SVDLikeRepresentation(U[:,1:r], diagm(S[1:r]), V[:,1:r])
+    return SVDLikeRepresentation(U[:,1:r], Diagonal(S[1:r]), V[:,1:r])
 end
 
 function truncated_svd(A::AbstractMatrix, ::TSVD, tol, rmin::Int, rmax::Int)
     U, S, V = tsvd(A, rmax)
-    return SVDLikeRepresentation(U, diagm(S), V)
+    return SVDLikeRepresentation(U, Diagonal(S), V)
+end
+
+function truncated_svd(A::AbstractLowRankRepresentation, ::SVDFact=SVDFact(); 
+                       tol = 1e-8, rmin = 1, rmax = minimum(size(A)), 
+                       alg_orthonormalize = QRFact()) 
+    Asvd = svd(A, alg_orthonormalize = alg_orthonormalize) 
+    r = (rmax == rmin) ? rmax : max(min(truncate_to_tolerance(Asvd.S.diag, tol), rmax), rmin)
+    return SVDLikeRepresentation(Asvd.U[:,1:r], Diagonal(Asvd.S.diag[1:r]), Asvd.V[:,1:r])
+end
+
+function truncated_svd(A::AbstractLowRankRepresentation, rank::Int, alg=SVDFact(); alg_orthonormalize = QRFact())
+    return round(A, rank, alg, alg_orthonormalize = alg_orthonormalize)
 end
 
 function truncate_to_tolerance(S, tol)
