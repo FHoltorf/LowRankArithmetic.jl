@@ -8,6 +8,12 @@ function truncated_svd(A::AbstractMatrix, rank::Int, alg = SVDFact())
     truncated_svd(A, alg; rmin = rank, rmax = rank)
 end
 
+function truncated_svd(A::AbstractLowRankRepresentation, alg = SVDFact(); tol = 1e-8, rmin = 1, rmax = rank(A))
+    Asvd = svd(A, alg)
+    r = (rmax == rmin) ? rmax : max(min(truncate_to_tolerance(A.S.diag, tol), rmax), rmin)
+    return SVDLikeRepresentation(Asvd.U[:,1:r], diagm(Asvd.S[1:r]), Asvd.V[:,1:r])
+end 
+
 function truncated_svd(A::AbstractMatrix, ::SVDFact, tol, rmin::Int, rmax::Int)
     U, S, V = svd(A)
     r = (rmax == rmin) ? rmax : max(min(truncate_to_tolerance(S, tol), rmax), rmin)
@@ -19,12 +25,14 @@ function truncated_svd(A::AbstractMatrix, ::TSVD, tol, rmin::Int, rmax::Int)
     return SVDLikeRepresentation(U, diagm(S), V)
 end
 
-function truncate_to_tolerance(S, tol)
+function truncate_to_tolerance(S, tol; rel = false)
     s = 0
     r = length(S)
+    scale = rel ? S[1] : 1.0
+    tol = (tol/scale)^2
     for σ in reverse(S)
         s += σ^2
-        if s > tol^2
+        if s > tol
             break
         end
         r -= 1
