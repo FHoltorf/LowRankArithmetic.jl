@@ -170,7 +170,7 @@ end
 function svd(A::SVDLikeRepresentation; alg_orthonormalize=QRFact())
     orthonormalize!(A, alg_orthonormalize)
     U_, S_, V_ = svd(A.S)
-    return SVDLikeRepresentation(A.U*U_, Diagonal(S_), A.V*V_)
+    return SVDLikeRepresentation(A.U*U_, diagm(S_), A.V*V_)
 end
 
 function qr(A::SVDLikeRepresentation, alg=QRFact())
@@ -196,7 +196,7 @@ function truncated_svd(A::SVDLikeRepresentation, ::TSVD;
                        alg_orthonormalize = QRFact()) 
     orthonormalize!(A, alg_orthonormalize)
     U_, S_, V_ = tsvd(A.S,rmax) 
-    return SVDLikeRepresentation(A.U*U_, Diagonal(S_), A.V*V_)
+    return SVDLikeRepresentation(A.U*U_, diagm(S_), A.V*V_)
 end
 
 ## orthonormalization 
