@@ -45,6 +45,7 @@ function SVDLikeRepresentation(A::TwoFactorRepresentation)
     U, S, V = svd(A.Z)
     return SVDLikeRepresentation(A.U*V, diagm(S), U)
 end
+SVDLikeRepresentation(A::SVDLikeRepresentation) = A
 
 ## *
 *(A::AbstractMatrix, B::SVDLikeRepresentation) = SVDLikeRepresentation(A*B.U, B.S, B.V)
