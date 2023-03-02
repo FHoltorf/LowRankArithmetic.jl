@@ -30,12 +30,6 @@ function truncated_svd(A::AbstractLowRankRepresentation, rank::Int, alg=SVDFact(
     return round(A, rank, alg, alg_orthonormalize = alg_orthonormalize)
 end
 
-function truncated_svd(A::TwoFactorRepresentation, rank::Int, alg=SVDFact(); alg_orthonormalize = QRFact())
-    orthonormalize!(A, alg_orthonormalize)
-    Z_lr = truncated_svd(A.Z, rank, alg)
-    return SVDLikeRepresentation(A.U*Z_lr.V, Z_lr.S, Z_lr.U)
-end
-
 function truncate_to_tolerance(S, tol)
     s = 0
     r = length(S)

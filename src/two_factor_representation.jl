@@ -183,6 +183,12 @@ function truncated_svd(A::TwoFactorRepresentation, ::TSVD;
     return SVDLikeRepresentation(A.U*U_, diagm(S_), V_)
 end
 
+function truncated_svd(A::TwoFactorRepresentation, rank::Int, alg=SVDFact(); alg_orthonormalize = QRFact())
+    orthonormalize!(A, alg_orthonormalize)
+    Z_lr = truncated_svd(A.Z, rank, alg)
+    return SVDLikeRepresentation(A.U*Z_lr.V, Z_lr.S, Z_lr.U)
+end
+
 ## orthonormalization 
 function orthonormalize!(LRA::TwoFactorRepresentation, alg)
     orthonormalize!(LRA.U, LRA.Z, alg)
