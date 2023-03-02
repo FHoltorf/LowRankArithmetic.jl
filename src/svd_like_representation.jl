@@ -43,7 +43,7 @@ adjoint(LRA::SVDLikeRepresentation) = TwoFactorRepresentation(conj(LRA.V),LRA.S'
 TwoFactorRepresentation(A::SVDLikeRepresentation) = TwoFactorRepresentation(A.U, A.V*A.S')
 function SVDLikeRepresentation(A::TwoFactorRepresentation) 
     U, S, V = svd(A.Z)
-    return SVDLikeRepresentation(A.U*V, S', U)
+    return SVDLikeRepresentation(A.U*V, diagm(S), U)
 end
 
 ## *
