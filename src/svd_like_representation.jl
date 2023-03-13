@@ -37,7 +37,7 @@ hcat(A::SVDLikeRepresentation, B::SVDLikeRepresentation) = SVDLikeRepresentation
 vcat(A::SVDLikeRepresentation, B::SVDLikeRepresentation) = SVDLikeRepresentation(blockdiagonal(A.U, B.U), blockdiagonal(A.S, B.S), hcat(A.V, B.V))
 
 # simple support of adjoints, probably not ideal though
-adjoint(LRA::SVDLikeRepresentation) = TwoFactorRepresentation(conj(LRA.V),LRA.S',conj(LRA.U)) 
+adjoint(LRA::SVDLikeRepresentation) = SVDLikeRepresentation(conj(LRA.V),LRA.S',conj(LRA.U)) 
 
 # converting between representations
 TwoFactorRepresentation(A::SVDLikeRepresentation) = TwoFactorRepresentation(A.U, A.V*A.S')
