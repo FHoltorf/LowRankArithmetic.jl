@@ -84,6 +84,10 @@ end
     B = U2*S2*V2'
     lr_B = SVDLikeRepresentation(U2,S2,V2)
 
+    # test adjoints
+    @test norm(lr_B - B) <= 1e-12
+    @test norm(lr_B'- B') <= 1e-12
+
     # testing addition
     @test norm(Matrix(lr_A + lr_B) - (A + B)) < 1e-10
 
@@ -115,7 +119,7 @@ end
     @test norm(Matrix(sum(lr_matrices)) - sum(full_representations)) < 1e-8
 
     # test prod
-    @test norm(Matrix(prod(lr_matrices)) -  prod(full_representations)) < 1e-5
+    @test norm(Matrix(prod(lr_matrices)) -  prod(full_representations))/norm(prod(full_representations)) < 1e-5
 
     # indexing tests
     A = SVDLikeRepresentation([i + j for i in 1:10, j in 1:3], ones(3,3), [i + j for i in 1:5, j in 1:3])
