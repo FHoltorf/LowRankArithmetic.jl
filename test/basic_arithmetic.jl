@@ -11,6 +11,10 @@ using LinearAlgebra
     B = U2*Z2'
     lr_B = TwoFactorRepresentation(U2,Z2)
 
+    #test adjoints
+    @test norm(lr_B - B) <= 1e-12
+    @test norm(lr_B'- B') <= 1e-12
+
     # testing addition
     @test norm(Matrix(lr_A + lr_B) - (A + B)) < 1e-10
 
