@@ -19,6 +19,8 @@ mutable struct SVDLikeRepresentation{uType, sType, vType} <: AbstractLowRankRepr
     V::vType
 end 
 
+eltype(LRA::SVDLikeRepresentation) = promote_type(eltype(LRA.U),eltype(LRA.S),eltype(LRA.V))
+
 rank(LRA::SVDLikeRepresentation) = size(LRA.S,1)
 size(LRA::SVDLikeRepresentation) = (size(LRA.U,1), size(LRA.V,1))
 size(LRA::SVDLikeRepresentation, ::Val{1}) = size(LRA.U,1)

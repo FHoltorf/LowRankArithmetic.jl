@@ -17,6 +17,7 @@ mutable struct TwoFactorRepresentation{uType, zType} <: AbstractLowRankRepresent
     Z::zType                              
 end
 
+eltype(LRA::TwoFactorRepresentation) = promote_type(eltype(LRA.U),eltype(LRA.Z))
 rank(LRA::TwoFactorRepresentation) = size(LRA.U, 2)
 size(LRA::TwoFactorRepresentation) = (size(LRA.U,1), size(LRA.Z,1))
 size(LRA::TwoFactorRepresentation, ::Val{1}) = size(LRA.U,1)
@@ -33,6 +34,7 @@ getindex(LRA::TwoFactorRepresentation, ::Colon, j::Int) = TwoFactorRepresentatio
 getindex(LRA::TwoFactorRepresentation, i::Int, ::Colon) = TwoFactorRepresentation(LRA.U[[i],:], LRA.Z)
 hcat(A::TwoFactorRepresentation, B::TwoFactorRepresentation) = TwoFactorRepresentation(hcat(A.U, B.U), blockdiagonal(A.Z, B.Z))
 vcat(A::TwoFactorRepresentation, B::TwoFactorRepresentation) = TwoFactorRepresentation(blockdiagonal(A.U, B.U), hcat(A.Z, B.Z))
+
 
 # simple support of adjoints, probably not ideal though
 adjoint(LRA::TwoFactorRepresentation) = TwoFactorRepresentation(conj(LRA.Z),conj(LRA.U)) 
